@@ -1,6 +1,6 @@
 {
   "name": "sw-testing-helpers",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A set of helper files used to test Propel and sw-toolbox.",
   "scripts": {
     "test": "mocha",
@@ -15,7 +15,7 @@
     "url": "https://github.com/GoogleChrome/sw-testing-helpers/issues"
   },
   "homepage": "https://github.com/GoogleChrome/sw-testing-helpers#readme",
-  "devDependencies": {
+  "dependencies": {
     "chai": "^3.5.0",
     "chromedriver": "^2.21.2",
     "del": "^2.2.0",
@@ -23,5 +23,8 @@
     "mocha": "^2.4.5",
     "selenium-webdriver": "^2.52.0",
     "which": "^1.2.4"
+  },
+  "devDependencies": {
+    "pullr": "^0.3.2"
   }
 }
