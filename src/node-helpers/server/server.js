@@ -23,20 +23,6 @@ const path = require('path');
 const express = require('express');
 const app = express();
 
-// Set up static assets and add service worker allowed header in case it's
-// needed for registering SW during tests
-app.use('/test/browser-tests/',
-  express.static(path.join(__dirname, '..', 'browser-tests/'), {
-    setHeaders: function(res) {
-      res.setHeader('Service-Worker-Allowed', '/');
-    }
-  })
-);
-
-// Allow all assets in the project to be served, including any
-// required js code from the project
-app.use('/', express.static(path.join(__dirname, '..', '..')));
-
 // If the user tries to go to the root of the server, redirect them
 // to the browser test path
 app.get('/', function(req, res) {
@@ -45,18 +31,32 @@ app.get('/', function(req, res) {
 
 let _server;
 
-function startServer(portNumber, cb) {
+function startServer(path, portNumber) {
   if (_server) {
     _server.close();
   }
 
-  // Start service on port 8888
-  _server = app.listen(portNumber, function() {
-    console.log('Example app listening at http://localhost:%s',
-      _server.address().port);
-    if (cb) {
-      cb(_server.address().port);
+  // 0 will pick a random port number
+  if (typeof portNumber === 'undefined') {
+    portNumber = 0;
+  }
+
+  // Allow all assets in the project to be served, including any
+  // required js code from the project
+  //
+  // Add service worker allowed header to avoid any scope restrictions
+  // NOTE: NOT SAFE FOR PRODUCTION!!!
+  app.use('/', express.static(path, {
+    setHeaders: function(res) {
+      res.setHeader('Service-Worker-Allowed', '/');
     }
+  }));
+
+  return new Promise(resolve => {
+    // Start service on desired port
+    _server = app.listen(portNumber, function() {
+      resolve(_server.address().port);
+    });
   });
 }
 

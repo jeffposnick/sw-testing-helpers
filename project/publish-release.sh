@@ -59,7 +59,7 @@ rm -rf ./tagged-release
 mkdir tagged-release
 
 # Copy over files that we want in the release
-cp -r ./helpers ./tagged-release
+cp -r ./src ./tagged-release
 cp -r ./test ./tagged-release
 cp LICENSE ./tagged-release
 cp package.json ./tagged-release

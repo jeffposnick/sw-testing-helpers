@@ -1,7 +1,8 @@
 {
   "name": "sw-testing-helpers",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "A set of helper files used to test Propel and sw-toolbox.",
+  "main": "./src/node-helpers/index.js",
   "scripts": {
     "test": "mocha",
     "browser-tests": "nodemon test/server/index.js"
