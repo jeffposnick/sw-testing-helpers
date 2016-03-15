@@ -34,13 +34,13 @@
   <script src="/node_modules/mocha/mocha.js"></script>
 
   <!-- SW Helper -->
-  <script src="/helpers/sw-helper.js"></script>
-
-  <!-- Add test scripts here -->
+  <script src="/src/in-browser-helpers/sw-helper.js"></script>
 
   <script>mocha.setup({
     ui: 'bdd'
   })</script>
+
+  <!-- Add test scripts here -->
 
   <script>
     (function() {
@@ -87,6 +87,7 @@
 
       });
 
+      mocha.checkLeaks();
       var runResults = mocha.run();
       // pass, fail and end events allow up to capture results and
       // determine when to publish test results
