@@ -22,10 +22,6 @@ const firefoxOptions = require('selenium-webdriver/firefox');
 const webdriver = require('selenium-webdriver');
 
 class AutomatedBrowserTesting {
-  constructor() {
-
-  }
-
   getAutomatedBrowsers() {
     const browserExecutables = [
       {
@@ -62,7 +58,7 @@ class AutomatedBrowserTesting {
 
         if (seleniumOptions.setChromeBinaryPath) {
           seleniumOptions.setChromeBinaryPath(executablePath);
-        } else if(seleniumOptions.setBinary) {
+        } else if (seleniumOptions.setBinary) {
           seleniumOptions.setBinary(executablePath);
         } else {
           throw new Error('Unknown selenium options object');
@@ -74,7 +70,7 @@ class AutomatedBrowserTesting {
             .forBrowser(browserInfo.seleniumBrowserId)
             .setChromeOptions(browserInfo.seleniumOptions)
             .setFirefoxOptions(browserInfo.seleniumOptions)
-            .build()
+            .build();
         };
 
         discoverableBrowsers.push(browserInfo);
@@ -93,19 +89,22 @@ class AutomatedBrowserTesting {
           prettyName: 'Firefox Beta',
           executableName: 'firefox',
           seleniumBrowserId: 'firefox',
-          seleniumOptions: seleniumOptions,
+          seleniumOptions: seleniumOptions
         };
+
         ffBetaBrowserInfo.getSeleniumDriver = () => {
           return new webdriver
             .Builder()
             .forBrowser(ffBetaBrowserInfo.seleniumBrowserId)
             .setChromeOptions(ffBetaBrowserInfo.seleniumOptions)
             .setFirefoxOptions(ffBetaBrowserInfo.seleniumOptions)
-            .build()
-        }
+            .build();
+        };
+
         discoverableBrowsers.push(ffBetaBrowserInfo);
       } catch (err) {
-        console.error(`Unable to find executable defined via FF_BETA_PATH. [${process.env.FF_BETA_PATH}]`);
+        console.error(`Unable to find executable defined via FF_BETA_PATH. ` +
+          `[${process.env.FF_BETA_PATH}]`);
       }
     }
 
@@ -130,7 +129,9 @@ class AutomatedBrowserTesting {
         // This is set in the in browser mocha tests when the tests have finished
         // successfully
         return driver.wait(function() {
-          return driver.executeScript('return ((typeof window.testsuite !== \'undefined\') && window.testsuite.testResults !== \'undefined\');');
+          return driver.executeScript('return ((typeof window.testsuite !== ' +
+            '\'undefined\') && window.testsuite.testResults !== ' +
+            '\'undefined\');');
         });
       })
       .then(() => {
@@ -149,7 +150,8 @@ class AutomatedBrowserTesting {
     // Print test failues
     if (testResults.failed.length > 0) {
       const failedTests = testResults.failed;
-      let errorMessage = 'Issues in ' + browserName + '.\n\n' + browserName + ' had ' + testResults.failed.length + ' test failures.\n';
+      let errorMessage = 'Issues in ' + browserName + '.\n\n' + browserName +
+        ' had ' + testResults.failed.length + ' test failures.\n';
       errorMessage += '------------------------------------------------\n';
       errorMessage += failedTests.map((failedTest, i) => {
         return `[Failed Test ${i + 1}]\n    ${failedTest.title}\n`;
