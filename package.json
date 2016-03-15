@@ -1,0 +1,31 @@
+{
+  "name": "sw-testing-helpers",
+  "version": "0.0.4",
+  "description": "A set of helper files used to test Propel and sw-toolbox.",
+  "main": "./src/node-helpers/index.js",
+  "scripts": {
+    "test": "mocha",
+    "browser-tests": "nodemon test/server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoogleChrome/sw-testing-helpers.git"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/GoogleChrome/sw-testing-helpers/issues"
+  },
+  "homepage": "https://github.com/GoogleChrome/sw-testing-helpers#readme",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "chromedriver": "^2.21.2",
+    "del": "^2.2.0",
+    "express": "^4.13.4",
+    "mocha": "^2.4.5",
+    "selenium-webdriver": "^2.52.0",
+    "which": "^1.2.4"
+  },
+  "devDependencies": {
+    "pullr": "^0.3.2"
+  }
+}
