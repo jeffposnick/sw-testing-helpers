@@ -3,3 +3,4 @@ tagged-release/
 npm-debug.log
 firefox-*.tar.bz2
 firefox/
+build/

@@ -25,6 +25,11 @@ if [[ $1 != "patch" && $1 != "minor" && $1 != "major" ]] ; then
 fi
 
 echo ""
+echo "Build and Test"
+echo ""
+npm run test
+
+echo ""
 echo "Sign into npm"
 echo ""
 npm whoami &>/dev/null || npm login
@@ -59,6 +64,7 @@ rm -rf ./tagged-release
 mkdir tagged-release
 
 # Copy over files that we want in the release
+cp -r ./build ./tagged-release
 cp -r ./src ./tagged-release
 cp -r ./test ./tagged-release
 cp LICENSE ./tagged-release

@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+/* eslint-env node */
 
 'use strict';
 
-const AutomatedBrowserTesting = require('./automated-browser-testing.js');
+const gulp = require('gulp');
+const del = require('del');
 
-module.exports = {
-  automatedBrowserTesting: new AutomatedBrowserTesting(),
-  testServer: require('./server/server.js')
-};
+gulp.task('clean', function() {
+  return del([GLOBAL.config.dest]);
+});

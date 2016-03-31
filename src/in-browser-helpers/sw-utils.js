@@ -95,7 +95,7 @@ window.goog.SWHelper = window.goog.SWHelper || {
     return window.caches.keys()
       .then(cacheNames => {
         return Promise.all(cacheNames.map(cacheName => {
-          window.caches.delete(cacheName);
+          return window.caches.delete(cacheName);
         }));
       });
   },
@@ -167,7 +167,7 @@ window.goog.SWHelper = window.goog.SWHelper || {
         // This method extracts the response streams and pairs
         // them with a url.
         var output = {};
-        cacheResponses.map(response => {
+        cacheResponses.forEach(response => {
           output[response.url] = response;
         });
         return output;
