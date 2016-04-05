@@ -56,7 +56,7 @@ function onStateChangePromise(registration, desiredState) {
 }
 
 window.goog = window.goog || {};
-window.goog.SWHelper = window.goog.SWHelper || {
+window.goog.WindowUtils = window.goog.WindowUtils || {
   // Each service worker that is registered should be given a unique
   // scope. To achieve this we register it with a scope the same as
   // an iframe's src that is unique for each test.
@@ -204,5 +204,42 @@ window.goog.SWHelper = window.goog.SWHelper || {
     this.messageListeners.push(messageListener);
 
     navigator.serviceWorker.addEventListener('message', messageListener);
+  },
+
+  runMochaTests(swPath) {
+    const sendMessage = (swController, testName) => {
+      return new Promise(function(resolve, reject) {
+        var messageChannel = new MessageChannel();
+        messageChannel.port1.onmessage = function(event) {
+          if (event.data.error) {
+            reject(event.data.error);
+          } else {
+            resolve(event.data);
+          }
+        };
+
+        swController.postMessage(testName,
+          [messageChannel.port2]);
+      });
+    };
+
+    return window.goog.WindowUtils.activateSW(swPath)
+    .then(iframe => {
+      return iframe.contentWindow.navigator.serviceWorker.ready
+      .then(registration => {
+        return registration.active;
+      })
+      .then(sw => {
+        return sendMessage(sw, 'start-tests');
+      })
+      .then(msgResponse => {
+        if (!msgResponse.testResults) {
+          throw new Error('Unexpected test result: ' + msgResponse);
+        }
+
+        // Print test failues
+        return msgResponse.testResults;
+      });
+    });
   }
 };
