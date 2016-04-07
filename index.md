@@ -2,8 +2,6 @@
 layout: default
 ---
 
-URL: {{ site.filteredurl }}
-
 {% assign staticFiles = site.static_files | sort: 'path' | reverse%}
 {% assign currentSectionName = '' %}
 {% assign currentVersionName = '' %}
@@ -13,15 +11,15 @@ URL: {{ site.filteredurl }}
     {% continue %}
   {% endif %}
 
-  {% if pathParts[1] != 'docs' %}
-    {% continue %}
-  {% endif %}
-
   {% comment %}
     The first forward slash in the path means pathParts[0] == ''
   {% endcomment %}
   {% assign pathParts = file.path | split: '/' %}
   {% assign tempSectionName = pathParts[2] %}
+
+  {% if pathParts[1] != 'docs' %}
+    {% continue %}
+  {% endif %}
 
   {% if currentSectionName != tempSectionName %}
     {% assign currentSectionName = tempSectionName %}
