@@ -2,7 +2,10 @@
 
   <div class="wrapper">
 
-    <a class="site-title" href="{{ site.github.url | replace: 'http://', '//' }}">{{ site.github.project_title }}</a>
+    <div class="site-title">
+      <p><a href="{{ site.github.url | replace: 'http://', '//' }}">{{ site.github.project_title }}</a></p>
+      <p>{{ site.github.project_tagline }}</p>
+    </div>
 
     <nav class="site-nav">
       <a href="#" class="menu-icon">
