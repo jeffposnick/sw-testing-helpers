@@ -2,7 +2,7 @@
 layout: default
 ---
 
-URL: {{ site.github.url }}
+URL: {{ site.filteredurl }}
 
 {% assign staticFiles = site.static_files | sort: 'path' | reverse%}
 {% assign currentSectionName = '' %}
@@ -34,9 +34,9 @@ URL: {{ site.github.url }}
 
   {% if pathParts.last == 'index.html' %}
     {% if pathParts.size == 4 %}
-[View the docs for {{currentSectionName | capitalize}}]({{ file.path | prepend: site.github.url }})
+[View the docs for {{currentSectionName | capitalize}}]({{ file.path | prepend: site.github.url | replace: 'http://', '//' }})
     {% elsif pathParts.size == 5 %}
-[View the docs for {{ site.github.project_title }} {{ pathParts[3] }}]({{ file.path | prepend: site.github.url }})
+[View the docs for {{ site.github.project_title }} {{ pathParts[3] }}]({{ file.path | prepend: site.github.url | replace: 'http://', '//' }})
     {% endif %}
   {% endif %}
 {% endfor %}

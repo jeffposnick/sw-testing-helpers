@@ -7,8 +7,8 @@
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
-          <li><a href="{{ site.github.url }}">Project Home</a></li>
-          <li><a href="{{ site.github.issues_url }}">Raise an issue</a></li>
+          <li><a href="{{ site.github.url | replace: 'http://', '//' }}">Project Home</a></li>
+          <li><a href="{{ site.github.issues_url | replace: 'http://', '//' }}">Raise an issue</a></li>
         </ul>
       </div>
 
