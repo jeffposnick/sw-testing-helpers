@@ -17,8 +17,7 @@
 
 importScripts('/node_modules/mocha/mocha.js');
 importScripts('/node_modules/chai/chai.js');
-importScripts('/src/browser/sw-utils.js');
-importScripts('/src/mocha/utils.js');
+importScripts('/build/browser/sw-utils.js');
 
 self.chai.should();
 mocha.setup({
@@ -28,7 +27,6 @@ mocha.setup({
 
 mocha.checkLeaks();
 mocha.globals(['goog']);
-
 
 describe('Example SW Tests', function() {
   it('should do nothing', function() {
