@@ -2,8 +2,6 @@
 layout: default
 ---
 
-Test.
-
 {% assign staticFiles = site.static_files | sort: 'path' | reverse%}
 {% assign currentSectionName = '' %}
 {% assign currentVersionName = '' %}
