@@ -1,5 +1,3 @@
-require 'rubygems'
-
 module DocsGenerator
   class Generator < Jekyll::Generator
     def generate(site)
