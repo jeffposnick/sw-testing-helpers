@@ -2,39 +2,15 @@
 layout: default
 ---
 
-{% assign staticFiles = site.static_files | sort: 'path' | reverse%}
-{% assign currentSectionName = '' %}
-{% assign currentVersionName = '' %}
+{% for docSection in site.data.docs %}
+# {{docSection[1].name | capitalize}}
 
-{% for file in staticFiles %}
-  {% if file.extname != '.html' %}
-    {% continue %}
-  {% endif %}
-
-  {% comment %}
-    The first forward slash in the path means pathParts[0] == ''
-  {% endcomment %}
-  {% assign pathParts = file.path | split: '/' %}
-  {% assign tempSectionName = pathParts[2] %}
-
-  {% if pathParts[1] != 'docs' %}
-    {% continue %}
-  {% endif %}
-
-  {% if currentSectionName != tempSectionName %}
-    {% assign currentSectionName = tempSectionName %}
-    {% if currentSectionName == 'master' %}
-# Master Branch
-    {% else %}
-# {{currentSectionName | capitalize}}
-    {% endif %}
-  {% endif %}
-
-  {% if pathParts.last == 'index.html' %}
-    {% if pathParts.size == 4 %}
-[View the docs for {{currentSectionName | capitalize}}]({{ file.path | prepend: site.github.url | replace: 'http://', 'https://' }})
-    {% elsif pathParts.size == 5 %}
-[View the docs for {{ site.github.project_title }} {{ pathParts[3] }}]({{ file.path | prepend: site.github.url | replace: 'http://', 'https://' }})
-    {% endif %}
-  {% endif %}
+{% for page in docSection[1].pages %}
+{% if docSection[1].name == 'releases' %}
+{% assign pathParts = page | split: '/' %}
+[View the docs for {{pathParts[2] }}]({{ page | prepend: site.github.url | replace: 'http://', 'https://' }})
+{% else %}
+[View the docs for {{docSection[1].name | capitalize}}]({{ page | prepend: site.github.url | replace: 'http://', 'https://' }})
+{% endif %}
+{% endfor %}
 {% endfor %}
