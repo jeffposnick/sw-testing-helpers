@@ -92,84 +92,6 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="mochaUtils"><span class="type-signature">(constant) </span>mochaUtils<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    Copyright 2016 Google Inc. All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="browser_sw-utils.js.html">browser/sw-utils.js</a>, <a href="browser_sw-utils.js.html#line20">line 20</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
 
     
 
@@ -178,15 +100,10 @@ limitations under the License.
 
         
                 
-<h4 class="name" id="TestResult">TestResult</h4>
+<h4 class="name" id="MochaTestResult">MochaTestResult</h4>
 
 
 
-
-<div class="description">
-    A TestResult object will contain the following information about the
-test it represents.
-</div>
 
 
 
@@ -253,29 +170,6 @@ test it represents.
 
         <tr>
             
-                <td class="name"><code>state</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Will be 'passed' or 'failed'</td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>title</code></td>
             
 
@@ -292,7 +186,30 @@ test it represents.
 
             
 
-            <td class="description last">Title of the test</td>
+            <td class="description last">Title of the test case</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">State of the test - 'passed' or 'failed'</td>
         </tr>
 
     
@@ -315,7 +232,7 @@ test it represents.
 
             
 
-            <td class="description last">Optional parameter if the test has failed</td>
+            <td class="description last">This is defined if the test threw an error</td>
         </tr>
 
     
@@ -354,7 +271,7 @@ test it represents.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="browser_window-utils.js.html">browser/window-utils.js</a>, <a href="browser_window-utils.js.html#line274">line 274</a>
+        <a href="utils_mocha.js.html">utils/mocha.js</a>, <a href="utils_mocha.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -372,14 +289,13 @@ test it represents.
 
             
                 
-<h4 class="name" id="TestResults">TestResults</h4>
+<h4 class="name" id="MochaTestResults">MochaTestResults</h4>
 
 
 
 
 <div class="description">
-    TestResults is a simple javascript object containing all results
-from the mocha test runner
+    The results from a set of Mocha tests
 </div>
 
 
@@ -430,7 +346,7 @@ from the mocha test runner
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#TestResult">TestResult</a>></span>
+<span class="param-type">Array.&lt;<a href="global.html#MochaTestResult">MochaTestResult</a>></span>
 
 
             
@@ -440,7 +356,7 @@ from the mocha test runner
 
             
 
-            <td class="description last">Array of passed tests</td>
+            <td class="description last">Tests that have passed</td>
         </tr>
 
     
@@ -453,7 +369,7 @@ from the mocha test runner
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="global.html#TestResult">TestResult</a>></span>
+<span class="param-type">Array.&lt;<a href="global.html#MochaTestResult">MochaTestResult</a>></span>
 
 
             
@@ -463,7 +379,7 @@ from the mocha test runner
 
             
 
-            <td class="description last">Array of failed tests</td>
+            <td class="description last">Tests that have failed</td>
         </tr>
 
     
@@ -502,7 +418,7 @@ from the mocha test runner
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="browser_window-utils.js.html">browser/window-utils.js</a>, <a href="browser_window-utils.js.html#line284">line 284</a>
+        <a href="utils_mocha.js.html">utils/mocha.js</a>, <a href="utils_mocha.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -532,13 +448,13 @@ from the mocha test runner
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="WindowUtils.html">WindowUtils</a></li></ul><h3>Global</h3><ul><li><a href="global.html#mochaUtils">mochaUtils</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-sw-testing-helpers.html">sw-testing-helpers</a></li></ul><h3>Classes</h3><ul><li><a href="AutomatedBrowserTesting.html">AutomatedBrowserTesting</a></li><li><a href="MochaUtils.html">MochaUtils</a></li><li><a href="SWUtils.html">SWUtils</a></li><li><a href="TestServer.html">TestServer</a></li><li><a href="WebDriverBrowser.html">WebDriverBrowser</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Apr 25 2016 09:43:31 GMT+0000 (UTC)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Apr 27 2016 09:33:43 GMT+0000 (UTC)
 </footer>
 
 <script> prettyPrint(); </script>
