@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: browser/sw-utils.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: browser/sw-utils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright 2016 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/* eslint-env browser */
+
+/**
+ * &lt;p>SWUtils can be used in a &lt;strong>webpage only&lt;/strong>.&lt;/p>
+ *
+ * &lt;p>This is helpful for managing service worker registrations and
+ * cache creation / clean up between unit tests.&lt;/p>
+ *
+ * @example
+ * &lt;script src="/node_modules/sw-testing-helper/browser/sw-utils.js">&lt;/script>
+ *
+ * &lt;script>
+ * 	console.log(window.goog.swUtils);
+ * &lt;/script>
+ */
+class SWUtils {
+  constructor() {
+    // The test counter ensures a unique scope between each test.
+    // testTime is used to ensure a unique scope between runs of
+    // the test suite - useful if manual testing parts of the
+    // suite in different tabs at the same time.
+    this._testCounter = 0;
+    this._testTime = new Date().getTime();
+  }
+
+  /**
+   * Helper method to determine when a specific state is achieved within
+   * a service worker (i.e. it becomes installed or activated).
+   *
+   * @private
+   *
+   * @param  {ServiceWorkerRegistration} registration registration to watch
+   *   for state changes
+   * @param  {String} desiredState Name of the desired state to wait for
+   * @return {Promise}        Resolves when the desired state is reached
+   */
+  _onStateChangePromise(registration, desiredState) {
+    return new Promise((resolve, reject) => {
+      if (registration.installing === null) {
+        throw new Error('Service worker is not installing. Did you call ' +
+          'cleanState() to unregister this service?');
+      }
+
+      var serviceWorker = registration.installing;
+
+      // We unregister all service workers after each test - this should
+      // always trigger an install state change
+      var stateChangeListener = function() {
+        if (this.state === desiredState) {
+          serviceWorker.removeEventListener('statechange', stateChangeListener);
+          resolve();
+          return;
+        }
+
+        if (this.state === 'redundant') {
+          serviceWorker.removeEventListener('statechange', stateChangeListener);
+
+          // Must call reject rather than throw error here due to this
+          // being inside the scope of the callback function stateChangeListener
+          reject(new Error('Installing servier worker became redundant'));
+          return;
+        }
+      };
+
+      serviceWorker.addEventListener('statechange', stateChangeListener);
+    });
+  }
+
+  /**
+   * &lt;p>When a service worker is installed / activated using SWUtils,
+   * it'll be registered with a unqiue scope and an iframe will be
+   * created matching that scope (allowing it to be controlled by that
+   * service worker only).&lt;/p>
+   *
+   * &lt;p>This method will get you the current iframe (if in the middle of a test)
+   * or create a new iframe.&lt;/p>
+   *
+   * @return {Promise.&lt;HTMLElement>} Resolves to the current iframe being
+   * used for tests.
+   */
+  getIframe() {
+    return new Promise(resolve => {
+      var existingIframe = document.querySelector('.js-test-iframe');
+      if (existingIframe) {
+        return resolve(existingIframe);
+      }
+
+      // This will be used as a unique service worker scope
+      this._testCounter++;
+
+      var newIframe = document.createElement('iframe');
+      newIframe.classList.add('js-test-iframe');
+      newIframe.addEventListener('load', () => {
+        resolve(newIframe);
+      });
+      newIframe.src = `/test/iframe/${this._testTime}${this._testCounter}`;
+      document.body.appendChild(newIframe);
+    });
+  }
+
+  /**
+   * Loop through all registrations for the current origin and unregister them.
+   *
+   * @return {Promise} Resolves once all promises are unregistered
+   */
+  unregisterAllRegistrations() {
+    return navigator.serviceWorker.getRegistrations()
+      .then(registrations => {
+        return Promise.all(registrations.map(registration => {
+          return registration.unregister();
+        }));
+      });
+  }
+
+  /**
+   * Loop over all caches for the current origin and delete them.
+   *
+   * @return {Promise} Resolves once all caches are deleted
+   */
+  clearAllCaches() {
+    return window.caches.keys()
+      .then(cacheNames => {
+        return Promise.all(cacheNames.map(cacheName => {
+          return window.caches.delete(cacheName);
+        }));
+      });
+  }
+
+  /**
+   * &lt;p>Register a service worker to a unique scope and
+   * create an iframe it can control, wait until the service worker's
+   * install step has completed.&lt;/p>
+   *
+   * &lt;p>Useful for testing events that occur in the install event (i.e.
+   * pre-caching of assets).&lt;/p>
+   *
+   * @param  {String} swUrl The url to a service worker file to register
+   * @return {Promise.&lt;HTMLElement>}       Resolves once the service worker is
+   * installed and returns the iframe it controls.
+   */
+  installSW(swUrl) {
+    return new Promise((resolve, reject) => {
+      var iframe;
+      this.getIframe()
+      .then(newIframe => {
+        var options = null;
+        if (newIframe) {
+          iframe = newIframe;
+          options = {scope: newIframe.contentWindow.location.pathname};
+        }
+
+        return navigator.serviceWorker.register(swUrl, options);
+      })
+      .then(registration => {
+        return this._onStateChangePromise(registration, 'installed');
+      })
+      .then(() => resolve(iframe))
+      .catch(err => reject(err));
+    });
+  }
+
+  /**
+   * &lt;p>Register a service worker with a unique scope and
+   * create an iframe that can be controlled by that service worker, then
+   * wait until the service worker's activate step has completed.&lt;/p>
+   *
+   * &lt;p>Useful for testing fetch events that can't occur until after the
+   * service worker has activated.&lt;/p>
+   *
+   * @param  {String} swUrl The url to a service worker file to register
+   * @return {Promise.&lt;HTMLElement>}       Resolves once the service worker is
+   * activated and returns the iframe it controls.
+   */
+  activateSW(swUrl) {
+    return new Promise((resolve, reject) => {
+      var iframe;
+      this.getIframe()
+      .then(newIframe => {
+        var options = null;
+        if (newIframe) {
+          options = {scope: newIframe.contentWindow.location.pathname};
+          iframe = newIframe;
+        }
+        return navigator.serviceWorker.register(swUrl, options);
+      })
+      .then(registration => {
+        return this._onStateChangePromise(registration, 'activated');
+      })
+      .then(() => resolve(iframe))
+      .catch(err => reject(err));
+    });
+  }
+
+  /**
+   * &lt;p>Helper method that checks a cache with a specific name exists before
+   * retrieving all the cached responses inside of it.&lt;/p>
+   *
+   * &lt;p>This is limited to text responses at the moment.&lt;/p>
+   *
+   * &lt;p>&lt;strong>NOTE: &lt;/strong>This will reject if the cache doesn't exist.&lt;/p>
+   *
+   * @param  {String} cacheName The name of the cache to get the contents from.
+   * @return {Promise.&lt;Object>}           Resolves to an object where the keys
+   * are URLs for the cache responses and the value is the text from the response.
+   * The promise rejects if the cache doesn't exist.
+   */
+  getAllCachedAssets(cacheName) {
+    var cache = null;
+    return window.caches.has(cacheName)
+      .then(hasCache => {
+        if (!hasCache) {
+          throw new Error('Cache doesn\'t exist.');
+        }
+
+        return window.caches.open(cacheName);
+      })
+      .then(openedCache => {
+        cache = openedCache;
+        return cache.keys();
+      })
+      .then(cachedRequests => {
+        return Promise.all(cachedRequests.map(cachedRequest => {
+          return cache.match(cachedRequest)
+          .then(response => {
+            return {
+              request: cachedRequest,
+              response: response
+            };
+          });
+        }));
+      })
+      .then(cacheRequestResponsePairs => {
+        // This method extracts the response streams and pairs
+        // them with a url.
+        var output = {};
+        cacheRequestResponsePairs.forEach(cacheRequestResponsePair => {
+          output[cacheRequestResponsePair.request.url] =
+            cacheRequestResponsePair.response;
+        });
+
+        return output;
+      });
+  }
+
+  /**
+   * Helper to unregister all service workers and clear all caches.
+   *
+   * @return {Promise} Resolves once service workers are unregistered and caches
+   * are deleted.
+   */
+  cleanState() {
+    return Promise.all([
+      this.unregisterAllRegistrations(),
+      this.clearAllCaches()
+    ])
+    .then(() => {
+      var iframeList = document.querySelectorAll('.js-test-iframe');
+      for (var i = 0; i &lt; iframeList.length; i++) {
+        iframeList[i].parentElement.removeChild(iframeList[i]);
+      }
+    });
+  }
+}
+
+window.goog = window.goog || {};
+window.goog.swUtils = window.goog.swUtils || new SWUtils();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-sw-testing-helpers.html">sw-testing-helpers</a></li></ul><h3>Classes</h3><ul><li><a href="AutomatedBrowserTesting.html">AutomatedBrowserTesting</a></li><li><a href="MochaUtils.html">MochaUtils</a></li><li><a href="SWUtils.html">SWUtils</a></li><li><a href="TestServer.html">TestServer</a></li><li><a href="WebDriverBrowser.html">WebDriverBrowser</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue May 24 2016 19:06:46 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
