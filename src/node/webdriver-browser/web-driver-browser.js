@@ -84,7 +84,7 @@ class WebDriverBrowser {
    * @return {String} Raw string that identifies the browser
    */
   getRawVersionString() {
-    return execSync(this._executablePath + ' --version')
+    return execSync(`"${this._executablePath}" --version`)
       .toString();
   }
 

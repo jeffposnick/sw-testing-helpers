@@ -29,8 +29,6 @@ before_install:
   - ./project/download/firefox-beta.sh
   - ./project/download/firefox-nightly.sh
   # Get marionette executable
-  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then ./project/download/firefox-beta.sh; fi
-  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then ./project/download/firefox-nightly.sh; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then ./project/download/get-marionette.sh; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then wget -O - http://deb.opera.com/archive.key | sudo apt-key add -; fi
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then sudo apt-add-repository "deb http://deb.opera.com/opera/ stable non-free"; fi
