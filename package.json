@@ -7,6 +7,7 @@
     "build": "gulp",
     "build-docs": "jsdoc -c ./jsdoc.conf",
     "bundle": "./project/copy-build-files.sh",
+    "pretest": "node ./test/helpers/download-test-browsers.js",
     "test": "npm run build && gulp scripts:lint && mocha"
   },
   "repository": {
@@ -46,6 +47,7 @@
     "require-dir": "^0.3.0",
     "rollupify": "^0.3.1",
     "run-sequence": "^1.1.5",
+    "selenium-assistant": "^0.1.6",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }
