@@ -1,13 +1,14 @@
 {
   "name": "sw-testing-helpers",
-  "version": "0.1.1",
-  "description": "A set of helper files used to test Propel and sw-toolbox.",
+  "version": "0.1.2",
+  "description": "A set of helper files used to test service worker libraries.",
   "main": "./index.js",
   "scripts": {
     "build": "gulp",
     "build-docs": "jsdoc -c ./jsdoc.conf",
     "bundle": "./project/copy-build-files.sh",
-    "test": "npm run build && gulp scripts:lint && mocha"
+    "test": "npm run build && gulp scripts:lint && mocha",
+    "postinstall": "node project/download/get-marionette.js"
   },
   "repository": {
     "type": "git",
@@ -23,9 +24,11 @@
     "chromedriver": "^2.21.2",
     "del": "^2.2.0",
     "express": "^4.13.4",
+    "got": "^6.3.0",
     "mocha": "^2.4.5",
     "pullr": "^0.3.2",
     "selenium-webdriver": "^2.53.2",
+    "tar": "^2.2.1",
     "which": "^1.2.4"
   },
   "devDependencies": {
@@ -48,5 +51,8 @@
     "run-sequence": "^1.1.5",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "bin": {
+    "wires": "geckodriver"
   }
 }
